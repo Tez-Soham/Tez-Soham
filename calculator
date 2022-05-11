@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="vieWwport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <title>Calculator</title>
+
+    <style>
+        .container {
+            border-radius: 15px;
+            background-color: rgb(48, 46, 46);
+        }
+
+        #display {
+            padding: 0px;
+            margin: 0px;
+            background-color: rgb(54, 102, 165);
+            color: white;
+            border-radius: 10px;
+        }
+
+        .btn {
+            align-items: center;
+            font-size: 40px;
+            height: 70px;
+            width: 81px;
+            background-color: black;
+            font-family: 'Courier New', Courier, monospace;
+            color: white;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="container" style="padding:30px; width: 400px; border:2px solid black; margin-top: 100px;">
+        <input type="text" name="answer" id="display" class="form-control"
+            style="padding: 10px; margin-bottom: 5px; font-size: 30px; height: 60px;">
+
+        <div class="line">
+            <button onclick="clean()" class="btn btn-dark">C</button>
+            <button onclick="remove()" class="btn btn-dark">🠔</button>
+            <button onclick="button('=')" class="btn btn-dark">=</button>
+            <button onclick="button('%')" class="btn btn-dark">%</button>
+
+            <button onclick="button('7')" class="btn btn-dark">7</button>
+            <button onclick="button('8')" class="btn btn-dark">8</button>
+            <button onclick="button('9')" class="btn btn-dark">9</button>
+            <button onclick="button('')" class="btn btn-dark"></button>
+
+            <button onclick="button('4')" class="btn btn-dark">4</button>
+            <button onclick="button('5')" class="btn btn-dark">5</button>
+            <button onclick="button('6')" class="btn btn-dark">6</button>
+            <button onclick="button('/')" class="btn btn-dark">/</button>
+
+            <button onclick="button('1')" class="btn btn-dark">1</button>
+            <button onclick="button('2')" class="btn btn-dark">2</button>
+            <button onclick="button('3')" class="btn btn-dark">3</button>
+            <button onclick="button('-')" class="btn btn-dark">-</button>
+
+            <button onclick="button('.')" class="btn btn-dark">.</button>
+            <button onclick="button('0')" class="btn btn-dark">0</button>
+            <button onclick="plusminus()" class="btn btn-dark">+-</button>
+            <button onclick="button('+')" class="btn btn-dark">+</button>
+
+        </div>
+    </div>
+
+    <script>
+        let operator = "";
+        let num1 = "";
+        let num2 = "";
+        let result = 0;
+        let sign = '-';
+        const num = ['.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        const op = ['-', '+', '*', '/', '%'];
+
+        let display = document.getElementById('display');
+
+        function button(x) {
+            if (num.indexOf(x) > -1) {  //check x value in num array
+                display.value += x;   // display value of x
+
+                if (num2 == "" && operator == "") {  //num2 and operator is not in display
+                    if (x == '.' && num1.indexOf('.') > -1) {  // dot is already in num1
+                        remove(); // remove new dot
+                    } else {
+                        num1 += x;  //add dot and digit
+                    }
+                }
+                else if (num1 != "" && operator != "") {  //num1 and operator is in display
+                    if (x == '.' && num2.indexOf('.') > -1) {  //dot is already in num2
+                        remove();  //remove new dot
+                    } else {
+                        num2 += x;  //add dot and digit
+                    }
+                }
+
+            } else {
+                if (op.indexOf(x) > -1 && num1 != "") {  // inside operator and number 
+                    result();
+                    if (operator != x) { //at a time one operator work(++,--)   when operator is not same 
+                        if (operator != "") { // operator is blank
+                            let a = display.value.substring(0, display.value.length - 1);  //remove last operator
+                            display.value = a;  //add new operator
+                        }
+                        operator = x;  //assign operator 
+                        display.value += x;  //add new operator in textbox
+                    }
+                }
+
+                if (x == "=") {
+                    result();  //calculate result
+                }
+            }
+
+            function result() {
+                if (num1 != "" && num2 != "" && operator != "") {  //inside num1, num2 and operator are not blank
+                    console.log(operator);
+                    let n1 = parseFloat(num1);  // string covert to float
+                    let n2 = parseFloat(num2);
+
+                    if (operator == '+') {
+                        result = n1 + n2;
+                        console.log(result)
+                    }
+                    else if (operator == '-') {
+                        result = n1 - n2;
+                        console.log(result)
+                    }
+                    else if (operator == '*') {
+                        result = n1 * n2;
+                        console.log(result)
+                    }
+                    else if (operator == '/') {
+                        result = n1 / n2;
+                        console.log(result)
+                    }
+                    else if (operator == '%') {
+                        result = n1 % n2;
+                        console.log(result)
+                    }
+                    display.value = result.toString(); //display result
+                    num1 = result.toString();  // answer in num1
+                    num2 = "";
+                    operator = "";
+                    sign = '-';
+                }
+            }
+        }
+
+        function remove() {
+            let a = display.value.slice(0, display.value.length - 1);
+            display.value = a;
+            if (num1 != "" || num2 != "" || operator != "") {  //when num1,num2 and operator any one in display
+                if (num2 == "" && operator == "") {  //condition of num2     num2 or operator are empty    means there are num1
+                    num1 = num1.substring(0, display.value.length - 1)  //reove last char of num1
+                }
+                else if (num1 != "" && operator != "" && num2 != "") { //condition of num2     num1,num2,operator are in display    last position is num2
+                    num2 = num2.substring(0, display.value.length - 1)  //remove last char of num2
+                }
+                else if (num1 != "" && num2 == "") {  //num1 is there and num2 is empty
+                    operator = "";  //remove operator
+                }
+            }
+        }
+
+        function plusminus() {
+            if (num1 != "" && operator == '' && num2 == "") {  //num1 is needed 
+                let no = parseFloat(num1);  //convert in float
+                if (sign == '-') {  //if sign variable is minus then num1 is converted into negative    
+                    num1 = -Math.abs(no).toString();   //convert positive to negative 
+                    sign = '+';  //next time this buttton is click then sign will be plus(means num1 is positve)
+                }
+                else {
+                    num1 = Math.abs(no).toString();  //convert negative into positive 
+                    sign = '-';  //next time this buttton is click then sign will be minus(means num1 is negative)
+                }
+                display.value = num1;
+            }
+        }
+
+        function clean() {
+            num1 = "";
+            num2 = "";
+            operator = "";
+            display.value = "";
+        }
+    </script>
+</body>
+
+</html>
